@@ -1,23 +1,36 @@
-import logo from './logo.svg';
-import './App.css';
+import logo from "./logo.svg";
+import "./App.css";
+import List from "./component/List";
+import { useEffect, useState } from "react";
+import Loading from "./component/Loading";
+
+const url = "https://randomuser.me/api/";
 
 function App() {
+  const [loading, setLoading] = useState(true);
+  const [dataset, setDataset] = useState([]);
+
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch(url);
+      const dataValues = await response.json();
+      setLoading(false);
+      setDataset(dataValues.results);
+      console.log(dataValues.results)
+    } catch (error) {
+      setLoading(true);
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    fetchData();
+  }, []);
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <h1>List of Users</h1>
+     <List dataset={dataset}  fetchData={ fetchData}/> 
     </div>
   );
 }
